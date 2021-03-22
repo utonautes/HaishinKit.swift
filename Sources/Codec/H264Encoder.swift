@@ -22,6 +22,7 @@ public final class H264Encoder {
         #if os(macOS)
         case enabledHardwareEncoder
         #endif
+        case maxKeyFrameInterval
         case maxKeyFrameIntervalDuration
         case scalingMode
 
@@ -39,6 +40,8 @@ public final class H264Encoder {
             case .enabledHardwareEncoder:
                 return \H264Encoder.enabledHardwareEncoder
             #endif
+            case .maxKeyFrameInterval:
+                return \H264Encoder.maxKeyFrameInterval
             case .maxKeyFrameIntervalDuration:
                 return \H264Encoder.maxKeyFrameIntervalDuration
             case .scalingMode:
@@ -125,6 +128,16 @@ public final class H264Encoder {
             invalidateSession = true
         }
     }
+    
+    var maxKeyFrameInterval: Int = 60 {
+        didSet {
+            guard maxKeyFrameInterval != oldValue else {
+                return
+            }
+            invalidateSession = true
+        }
+    }
+    
     var maxKeyFrameIntervalDuration: Double = 2.0 {
         didSet {
             guard maxKeyFrameIntervalDuration != oldValue else {
@@ -171,6 +184,7 @@ public final class H264Encoder {
             kVTCompressionPropertyKey_ProfileLevel: profileLevel as NSObject,
             kVTCompressionPropertyKey_AverageBitRate: Int(bitrate) as NSObject,
             kVTCompressionPropertyKey_ExpectedFrameRate: NSNumber(value: expectedFPS),
+            kVTCompressionPropertyKey_MaxKeyFrameInterval: NSDecimalNumber(value: maxKeyFrameInterval),
             kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration: NSNumber(value: maxKeyFrameIntervalDuration),
             kVTCompressionPropertyKey_AllowFrameReordering: !isBaseline as NSObject,
             kVTCompressionPropertyKey_PixelTransferProperties: [
