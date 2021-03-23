@@ -47,25 +47,8 @@ final class LiveViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        rtmpStream = RTMPStream(connection: rtmpConnection)
-        if let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
-            rtmpStream.orientation = orientation
-        }
-        rtmpStream.captureSettings = [
-            .sessionPreset: AVCaptureSession.Preset.hd1280x720,
-            .continuousAutofocus: true,
-            .continuousExposure: true
-            // .preferredVideoStabilizationMode: AVCaptureVideoStabilizationMode.auto
-        ]
-        rtmpStream.videoSettings = [
-            .width: 720,
-            .height: 1280
-        ]
-        rtmpStream.mixer.recorder.delegate = ExampleRecorderDelegate.shared
-
-        videoBitrateSlider?.value = Float(RTMPStream.defaultVideoBitrate) / 1000
-        audioBitrateSlider?.value = Float(RTMPStream.defaultAudioBitrate) / 1000
+        
+        logger.info("viewDidLoad")
 
         NotificationCenter.default.addObserver(self, selector: #selector(on(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -75,6 +58,55 @@ final class LiveViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         logger.info("viewWillAppear")
         super.viewWillAppear(animated)
+        
+        rtmpStream = RTMPStream(connection: rtmpConnection)
+        if let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
+            rtmpStream.orientation = orientation
+        }
+        var sessionPreset: AVCaptureSession.Preset = .hd1280x720
+        var width = 720
+        var height = 1280
+        switch Preference.defaultInstance.resolution {
+        case 0:
+            sessionPreset = .cif352x288
+            width = 288
+            height = 352
+        case 1:
+            sessionPreset = .hd1280x720
+            width = 720
+            height = 1280
+        case 2:
+            sessionPreset = .hd1920x1080
+            width = 1080
+            height = 1920
+        case 3:
+            sessionPreset = .hd4K3840x2160
+            width = 2160
+            height = 3840
+        default:
+            sessionPreset = .hd1280x720
+            width = 720
+            height = 1080
+        }
+        rtmpStream.captureSettings = [
+            .sessionPreset: sessionPreset,
+            .continuousAutofocus: true,
+            .continuousExposure: true
+            // .preferredVideoStabilizationMode: AVCaptureVideoStabilizationMode.auto
+        ]
+        // keyFrameInterval First. if zero, use keyFrameIntervalDuration
+        rtmpStream.videoSettings = [
+            .width: width,
+            .height: height,
+            .maxKeyFrameInterval: Preference.defaultInstance.keyframeInterval!,
+            .maxKeyFrameIntervalDuration: Preference.defaultInstance.keyframeDuration!,
+            .profileLevel: kVTProfileLevel_H264_Main_AutoLevel,
+            .allowFrameReordering: Preference.defaultInstance.allowBFrame!
+        ]
+        rtmpStream.mixer.recorder.delegate = ExampleRecorderDelegate.shared
+
+        videoBitrateSlider?.value = Float(RTMPStream.defaultVideoBitrate) / 1000 / 1000
+        audioBitrateSlider?.value = Float(RTMPStream.defaultAudioBitrate) / 1000
         rtmpStream.attachAudio(AVCaptureDevice.default(for: .audio)) { error in
             logger.warn(error.description)
         }
@@ -113,8 +145,8 @@ final class LiveViewController: UIViewController {
             rtmpStream.audioSettings[.bitrate] = slider.value * 1000
         }
         if slider == videoBitrateSlider {
-            videoBitrateLabel?.text = "video \(Int(slider.value))/kbps"
-            rtmpStream.videoSettings[.bitrate] = slider.value * 1000
+            videoBitrateLabel?.text = "video \(Int(slider.value))/mbps"
+            rtmpStream.videoSettings[.bitrate] = slider.value * 1000 * 1000
         }
         if slider == zoomSlider {
             rtmpStream.setZoomFactor(CGFloat(slider.value), ramping: true, withRate: 5.0)
