@@ -24,6 +24,7 @@ public final class H264Encoder {
         #endif
         case maxKeyFrameInterval
         case maxKeyFrameIntervalDuration
+        case allowFrameReordering
         case scalingMode
 
         public var keyPath: AnyKeyPath {
@@ -44,6 +45,8 @@ public final class H264Encoder {
                 return \H264Encoder.maxKeyFrameInterval
             case .maxKeyFrameIntervalDuration:
                 return \H264Encoder.maxKeyFrameIntervalDuration
+            case .allowFrameReordering:
+                return \H264Encoder.allowFrameReordering
             case .scalingMode:
                 return \H264Encoder.scalingMode
             case .profileLevel:
@@ -52,9 +55,9 @@ public final class H264Encoder {
         }
     }
 
-    public static let defaultWidth: Int32 = 480
-    public static let defaultHeight: Int32 = 272
-    public static let defaultBitrate: UInt32 = 160 * 1000
+    public static let defaultWidth: Int32 = 720
+    public static let defaultHeight: Int32 = 1280
+    public static let defaultBitrate: UInt32 = 5 * 1000 * 1000
     public static let defaultScalingMode: ScalingMode = .trim
 
     #if os(iOS)
@@ -129,7 +132,7 @@ public final class H264Encoder {
         }
     }
     
-    var maxKeyFrameInterval: Int = 60 {
+    var maxKeyFrameInterval: Int32 = 0 {
         didSet {
             guard maxKeyFrameInterval != oldValue else {
                 return
@@ -138,9 +141,18 @@ public final class H264Encoder {
         }
     }
     
-    var maxKeyFrameIntervalDuration: Double = 2.0 {
+    var maxKeyFrameIntervalDuration: Double = 0 {
         didSet {
             guard maxKeyFrameIntervalDuration != oldValue else {
+                return
+            }
+            invalidateSession = true
+        }
+    }
+    
+    var allowFrameReordering: Bool = false {
+        didSet {
+            guard allowFrameReordering != oldValue else {
                 return
             }
             invalidateSession = true
@@ -184,9 +196,9 @@ public final class H264Encoder {
             kVTCompressionPropertyKey_ProfileLevel: profileLevel as NSObject,
             kVTCompressionPropertyKey_AverageBitRate: Int(bitrate) as NSObject,
             kVTCompressionPropertyKey_ExpectedFrameRate: NSNumber(value: expectedFPS),
-            kVTCompressionPropertyKey_MaxKeyFrameInterval: NSDecimalNumber(value: maxKeyFrameInterval),
-            kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration: NSNumber(value: maxKeyFrameIntervalDuration),
-            kVTCompressionPropertyKey_AllowFrameReordering: !isBaseline as NSObject,
+            kVTCompressionPropertyKey_MaxKeyFrameInterval: NSNumber(value: maxKeyFrameInterval),
+            kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration: NSDecimalNumber(value: maxKeyFrameIntervalDuration),
+            kVTCompressionPropertyKey_AllowFrameReordering: allowFrameReordering as NSObject/* !isBaseline as NSObject */,
             kVTCompressionPropertyKey_PixelTransferProperties: [
                 "ScalingMode": scalingMode.rawValue
             ] as NSObject
@@ -201,6 +213,7 @@ public final class H264Encoder {
         if !isBaseline {
             properties[kVTCompressionPropertyKey_H264EntropyMode] = kVTH264EntropyMode_CABAC
         }
+        logger.info("\(properties)")
         return properties
     }
 
@@ -238,6 +251,7 @@ public final class H264Encoder {
                     logger.warn("create a VTCompressionSessionCreate")
                     return nil
                 }
+                logger.info("\(width) x \(height)")
                 invalidateSession = false
                 status = session.setProperties(properties)
                 status = session.prepareToEncodeFrame()
@@ -269,6 +283,7 @@ public final class H264Encoder {
             return
         }
         var flags: VTEncodeInfoFlags = []
+//        logger.info("encode Image Buffer: PTS: \(presentationTimeStamp) / duration: \(duration)")
         VTCompressionSessionEncodeFrame(
             session,
             imageBuffer: muted ? lastImageBuffer ?? imageBuffer : imageBuffer,
