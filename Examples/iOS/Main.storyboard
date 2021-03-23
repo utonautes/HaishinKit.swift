@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -79,13 +79,13 @@
                                     <action selector="onSlider:" destination="9pv-A4-QxB" eventType="valueChanged" id="IS3-vj-jFX"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="video 160/kbps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dLf-ee-K3I">
-                                <rect key="frame" x="236" y="732" width="116" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="video 5/mbps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dLf-ee-K3I">
+                                <rect key="frame" x="248.5" y="732" width="103.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="160" minValue="32" maxValue="1024" translatesAutoresizingMaskIntoConstraints="NO" id="4s5-OW-qAO">
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="5" minValue="0.5" maxValue="50" translatesAutoresizingMaskIntoConstraints="NO" id="4s5-OW-qAO">
                                 <rect key="frame" x="14" y="737" width="340" height="31"/>
                                 <connections>
                                     <action selector="onSlider:" destination="9pv-A4-QxB" eventType="valueChanged" id="Nm5-Xr-jcw"/>
@@ -210,6 +210,40 @@
                                     <outlet property="delegate" destination="8rJ-Kc-sve" id="LBu-SL-u7B"/>
                                 </connections>
                             </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pyk-b3-Mi9" userLabel="Key Frame Interval Field">
+                                <rect key="frame" x="8" y="136" width="394" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="8rJ-Kc-sve" id="kfx-Ca-KJU"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="flt-Cw-bFR" userLabel="Key Frame Duration Field">
+                                <rect key="frame" x="10" y="178" width="394" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="8rJ-Kc-sve" id="Hkj-c6-6hj"/>
+                                </connections>
+                            </textField>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="85v-e3-5yk" userLabel="Capture Resolution Segment">
+                                <rect key="frame" x="20" y="220" width="374" height="32"/>
+                                <segments>
+                                    <segment title="352x288"/>
+                                    <segment title="1280x720"/>
+                                    <segment title="1920x1080"/>
+                                    <segment title="3840x2160"/>
+                                </segments>
+                                <connections>
+                                    <action selector="resolutionValueChanged:" destination="8rJ-Kc-sve" eventType="valueChanged" id="TdG-28-3ie"/>
+                                </connections>
+                            </segmentedControl>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vqC-O6-Koh" userLabel="B-frame Allow Switch">
+                                <rect key="frame" x="20" y="259" width="51" height="31"/>
+                                <connections>
+                                    <action selector="bFrameAllowSwitchValueChnged:" destination="8rJ-Kc-sve" eventType="valueChanged" id="K0Z-nC-CiU"/>
+                                </connections>
+                            </switch>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q77-wA-cY7">
                                 <rect key="frame" x="8" y="783" width="394" height="30"/>
                                 <color key="backgroundColor" red="0.012865800950000001" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -224,25 +258,40 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Q77-wA-cY7" firstAttribute="trailing" secondItem="QS5-Rx-YEW" secondAttribute="trailingMargin" constant="8" id="1a0-JV-nZh"/>
+                            <constraint firstItem="ezw-xF-e01" firstAttribute="trailing" secondItem="pyk-b3-Mi9" secondAttribute="trailing" constant="12" id="7Cr-oB-9WV"/>
+                            <constraint firstItem="pyk-b3-Mi9" firstAttribute="top" secondItem="A5Y-FA-epc" secondAttribute="bottom" constant="8" id="B0c-9T-9kF"/>
                             <constraint firstItem="A5Y-FA-epc" firstAttribute="leading" secondItem="Hiy-yh-Bwn" secondAttribute="leading" id="CJJ-BH-Gde"/>
                             <constraint firstItem="Hiy-yh-Bwn" firstAttribute="top" secondItem="ezw-xF-e01" secondAttribute="top" constant="8" id="CVs-CB-ZGl"/>
+                            <constraint firstItem="flt-Cw-bFR" firstAttribute="top" secondItem="pyk-b3-Mi9" secondAttribute="bottom" constant="8" id="DBl-QU-GTC"/>
+                            <constraint firstItem="ezw-xF-e01" firstAttribute="trailing" secondItem="flt-Cw-bFR" secondAttribute="trailing" constant="10" id="DEE-Mc-mxx"/>
+                            <constraint firstItem="85v-e3-5yk" firstAttribute="top" secondItem="flt-Cw-bFR" secondAttribute="bottom" constant="8" id="ENs-8o-PsO"/>
                             <constraint firstItem="A5Y-FA-epc" firstAttribute="top" secondItem="Hiy-yh-Bwn" secondAttribute="bottom" constant="8" symbolic="YES" id="Nvl-et-opI"/>
-                            <constraint firstItem="ezw-xF-e01" firstAttribute="bottom" secondItem="Q77-wA-cY7" secondAttribute="bottom" constant="8" symbolic="YES" id="PUC-5i-7iv"/>
+                            <constraint firstItem="ezw-xF-e01" firstAttribute="bottom" secondItem="Q77-wA-cY7" secondAttribute="bottom" symbolic="YES" id="PUC-5i-7iv"/>
+                            <constraint firstItem="vqC-O6-Koh" firstAttribute="top" secondItem="85v-e3-5yk" secondAttribute="bottom" constant="8" id="RyV-eO-CJA"/>
                             <constraint firstItem="Hiy-yh-Bwn" firstAttribute="leading" secondItem="ezw-xF-e01" secondAttribute="leading" constant="8" id="UR1-Hr-4D4"/>
                             <constraint firstItem="ezw-xF-e01" firstAttribute="trailing" secondItem="A5Y-FA-epc" secondAttribute="trailing" constant="160" id="buc-rb-JnR"/>
+                            <constraint firstItem="ezw-xF-e01" firstAttribute="trailing" secondItem="85v-e3-5yk" secondAttribute="trailing" constant="20" id="jrw-EU-5eO"/>
                             <constraint firstItem="Hiy-yh-Bwn" firstAttribute="trailing" secondItem="QS5-Rx-YEW" secondAttribute="trailingMargin" constant="8" id="kGk-2F-Qtn"/>
+                            <constraint firstItem="flt-Cw-bFR" firstAttribute="leading" secondItem="ezw-xF-e01" secondAttribute="leading" constant="10" id="nBu-Li-JA1"/>
+                            <constraint firstItem="85v-e3-5yk" firstAttribute="leading" secondItem="ezw-xF-e01" secondAttribute="leading" constant="20" id="oOZ-1d-N4a"/>
+                            <constraint firstItem="pyk-b3-Mi9" firstAttribute="leading" secondItem="ezw-xF-e01" secondAttribute="leading" constant="8" id="pqP-Eu-iTP"/>
+                            <constraint firstItem="vqC-O6-Koh" firstAttribute="leading" secondItem="ezw-xF-e01" secondAttribute="leading" constant="20" id="puf-RZ-gaU"/>
                             <constraint firstItem="Q77-wA-cY7" firstAttribute="leading" secondItem="ezw-xF-e01" secondAttribute="leading" constant="8" id="uKo-hV-Ipd"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Preference" image="second" id="cPa-gy-q4n"/>
                     <connections>
+                        <outlet property="bFrameAllowSwitch" destination="vqC-O6-Koh" id="d9w-do-RcT"/>
+                        <outlet property="captureResolutionSegmentControl" destination="85v-e3-5yk" id="1v1-Ab-yvY"/>
+                        <outlet property="keyFrameDurationField" destination="flt-Cw-bFR" id="wF7-1o-qsZ"/>
+                        <outlet property="keyFrameIntervalField" destination="pyk-b3-Mi9" id="VOp-Go-k4G"/>
                         <outlet property="streamNameField" destination="A5Y-FA-epc" id="KUC-b8-agC"/>
                         <outlet property="urlField" destination="Hiy-yh-Bwn" id="zo8-Kl-J5D"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="749" y="402"/>
+            <point key="canvasLocation" x="747.82608695652175" y="401.78571428571428"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
