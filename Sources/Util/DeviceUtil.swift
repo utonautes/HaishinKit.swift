@@ -41,6 +41,57 @@ extension AVCaptureDevice {
 
         return nil
     }
+    
+    func findCompatibleFormat(resolution: CMVideoDimensions, fps: Double) -> AVCaptureDevice.Format? {
+        var matchFormats: [AVCaptureDevice.Format] = []
+        for format in formats {
+            if format.formatDescription.dimensions == resolution && format.videoSupportedFrameRateRanges[0].contains(rate:fps) {
+                matchFormats.append(format)
+                
+            }
+        }
+        var supportVis: [AVCaptureDevice.Format] = []
+        for format in matchFormats {
+            if format.isVideoStabilizationModeSupported(.auto) {
+                supportVis.append(format)
+            }
+        }
+        var supportBinned: [AVCaptureDevice.Format] = []
+        for format in matchFormats {
+            if format.isVideoBinned {
+                supportBinned.append(format)
+            }
+        }
+        var supportWideColor: [AVCaptureDevice.Format] = []
+        for format in matchFormats {
+            if #available(iOSApplicationExtension 13.0, *) {
+                if format.isGlobalToneMappingSupported {
+                    supportWideColor.append(format)
+                }
+            }
+        }
+        var bestMatchFormats:Set = Set(matchFormats)
+        if !bestMatchFormats.intersection(supportVis).isEmpty {
+            bestMatchFormats = bestMatchFormats.intersection(supportVis)
+        }
+        if !bestMatchFormats.intersection(supportBinned).isEmpty {
+            bestMatchFormats = bestMatchFormats.intersection(supportBinned)
+        }
+        if !bestMatchFormats.intersection(supportWideColor).isEmpty {
+            bestMatchFormats = bestMatchFormats.intersection(supportWideColor)
+        }
+        let results = Array(bestMatchFormats)
+        if results.isEmpty {
+            return activeFormat
+        }
+        return results[0]
+    }
+}
+
+extension CMVideoDimensions {
+    static func == (lhs: CMVideoDimensions, rhs: CMVideoDimensions) -> Bool {
+        return (lhs.width == rhs.width && lhs.height == rhs.height)
+    }
 }
 
 public struct DeviceUtil {

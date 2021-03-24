@@ -87,8 +87,21 @@ final class VideoIOComponent: IOComponent {
         didSet {
             guard
                 let device: AVCaptureDevice = (input as? AVCaptureDeviceInput)?.device,
-                let data = device.actualFPS(fps) else {
+                var data = device.actualFPS(fps) else {
                     return
+            }
+            
+            if data.fps != fps {
+                logger.info("retry set with best compatible format")
+                let newFormat: AVCaptureDevice.Format = device.findCompatibleFormat(resolution: device.activeFormat.formatDescription.dimensions, fps: fps)!
+                do {
+                    try device.lockForConfiguration()
+                    device.automaticallyAdjustsVideoHDREnabled = false
+                    device.activeFormat = newFormat
+                    data = device.actualFPS(fps)!
+                } catch let error {
+                    logger.error("\(error.localizedDescription)")
+                }
             }
 
             fps = data.fps
