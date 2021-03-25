@@ -90,7 +90,7 @@ extension AVCaptureDevice {
 
 // Available Resolution & Framerates
 extension AVCaptureDevice {
-    func availableDimensions() -> [CMVideoDimensions] {
+    open func availableDimensions() -> [CMVideoDimensions] {
         var dimensions: [CMVideoDimensions] = []
         for format in formats {
             for dim in dimensions {
@@ -103,7 +103,7 @@ extension AVCaptureDevice {
         return dimensions
     }
     
-    func availableFrameRateRange(_ dimension:CMVideoDimensions? = nil) -> (minFrameRate: Double, maxFrameRate: Double) {
+    open func availableFrameRateRange(_ dimension:CMVideoDimensions? = nil) -> (minFrameRate: Double, maxFrameRate: Double) {
         let dim: CMVideoDimensions = dimension ?? activeFormat.formatDescription.dimensions
         var frameRate: (minFrameRate:Double, maxFrameRate:Double) = (999, -1)
         for format in formats {
