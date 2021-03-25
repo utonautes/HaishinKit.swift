@@ -88,6 +88,39 @@ extension AVCaptureDevice {
     }
 }
 
+// Available Resolution & Framerates
+extension AVCaptureDevice {
+    func availableDimensions() -> [CMVideoDimensions] {
+        var dimensions: [CMVideoDimensions] = []
+        for format in formats {
+            for dim in dimensions {
+                if dim == format.formatDescription.dimensions {
+                    continue
+                }
+            }
+            dimensions.append(format.formatDescription.dimensions)
+        }
+        return dimensions
+    }
+    
+    func availableFrameRateRange(_ dimension:CMVideoDimensions? = nil) -> (minFrameRate: Double, maxFrameRate: Double) {
+        let dim: CMVideoDimensions = dimension ?? activeFormat.formatDescription.dimensions
+        var frameRate: (minFrameRate:Double, maxFrameRate:Double) = (999, -1)
+        for format in formats {
+            if format.formatDescription.dimensions == dim {
+                let fr: AVFrameRateRange = format.videoSupportedFrameRateRanges[0]
+                if fr.minFrameRate < frameRate.minFrameRate {
+                    frameRate.minFrameRate = fr.minFrameRate
+                }
+                if fr.maxFrameRate > frameRate.maxFrameRate{
+                    frameRate.maxFrameRate = fr.maxFrameRate
+                }
+            }
+        }
+        return frameRate
+    }
+}
+
 extension CMVideoDimensions {
     static func == (lhs: CMVideoDimensions, rhs: CMVideoDimensions) -> Bool {
         return (lhs.width == rhs.width && lhs.height == rhs.height)
