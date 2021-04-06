@@ -42,7 +42,7 @@ extension AVCaptureDevice {
         return nil
     }
     
-    func findCompatibleFormat(resolution: CMVideoDimensions, fps: Double) -> AVCaptureDevice.Format? {
+    open func findCompatibleFormat(resolution: CMVideoDimensions, fps: Double) -> AVCaptureDevice.Format? {
         var matchFormats: [AVCaptureDevice.Format] = []
         for format in formats {
             if format.formatDescription.dimensions == resolution && format.videoSupportedFrameRateRanges[0].contains(rate:fps) {
