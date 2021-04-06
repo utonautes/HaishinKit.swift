@@ -22,6 +22,7 @@ public class AVMixer {
     #if os(iOS) || os(macOS)
     public enum Option: String, KeyPathRepresentable, CaseIterable {
         case fps
+        case activeFormat
         case sessionPreset
         case isVideoMirrored
         case continuousAutofocus
@@ -47,6 +48,8 @@ public class AVMixer {
             case .preferredVideoStabilizationMode:
                 return \AVMixer.preferredVideoStabilizationMode
             #endif
+            case .activeFormat:
+                return \AVMixer.activeFormat
             }
         }
     }
@@ -96,6 +99,11 @@ public class AVMixer {
             session.sessionPreset = sessionPreset
             session.commitConfiguration()
         }
+    }
+    
+    var activeFormat: AVCaptureDevice.Format? {
+        get { videoIO.activeFormat }
+        set { videoIO.activeFormat = newValue}
     }
 
     private var _session: AVCaptureSession?

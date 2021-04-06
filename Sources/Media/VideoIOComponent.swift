@@ -118,6 +118,15 @@ final class VideoIOComponent: IOComponent {
             }
         }
     }
+    
+    var activeFormat: AVCaptureDevice.Format? {
+        didSet {
+            guard let device: AVCaptureDevice = (input as? AVCaptureDeviceInput)?.device else {
+                return
+            }
+            device.activeFormat = activeFormat!
+        }
+    }
 
     var position: AVCaptureDevice.Position = .back
 
