@@ -124,6 +124,7 @@ final class VideoIOComponent: IOComponent {
             guard let device: AVCaptureDevice = (input as? AVCaptureDeviceInput)?.device else {
                 return
             }
+            print("change activeFormat")
             device.activeFormat = activeFormat!
         }
     }
