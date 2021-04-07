@@ -98,6 +98,7 @@ final class VideoIOComponent: IOComponent {
                     try device.lockForConfiguration()
                     device.automaticallyAdjustsVideoHDREnabled = false
                     device.activeFormat = newFormat
+                    device.unlockForConfiguration()
                     data = device.actualFPS(fps)!
                 } catch let error {
                     logger.error("\(error.localizedDescription)")
@@ -107,6 +108,7 @@ final class VideoIOComponent: IOComponent {
             fps = data.fps
             encoder.expectedFPS = data.fps
             logger.info("\(data)")
+            logger.info("\(device.activeFormat)")
 
             do {
                 try device.lockForConfiguration()
@@ -124,8 +126,14 @@ final class VideoIOComponent: IOComponent {
             guard let device: AVCaptureDevice = (input as? AVCaptureDeviceInput)?.device else {
                 return
             }
-            print("change activeFormat")
-            device.activeFormat = activeFormat!
+            do {
+                try device.lockForConfiguration()
+                print("change activeFormat")
+                device.activeFormat = activeFormat!
+                device.unlockForConfiguration()
+            } catch {
+                print("\(error.localizedDescription)")
+            }
         }
     }
 
