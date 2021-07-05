@@ -128,7 +128,7 @@ extension PESOptionalHeader: CustomDebugStringConvertible {
 // MARK: -
 struct PacketizedElementaryStream: PESPacketHeader {
     static let untilPacketLengthSize: Int = 6
-    static let startCode = Data([0x00, 0x00, 0x01])
+    static let startCode = Data([0x00, 0x00, 0x00, 0x01]) // 4 byte start code
 
     // swiftlint:disable function_parameter_count
     static func create(_ bytes: UnsafePointer<UInt8>?, count: UInt32, presentationTimeStamp: CMTime, decodeTimeStamp: CMTime, timestamp: CMTime, config: Any?, randomAccessIndicator: Bool) -> PacketizedElementaryStream? {
