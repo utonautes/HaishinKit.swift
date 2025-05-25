@@ -65,8 +65,12 @@ extension AVCaptureDevice {
         var supportWideColor: [AVCaptureDevice.Format] = []
         for format in matchFormats {
             if #available(iOSApplicationExtension 13.0, *) {
-                if format.isGlobalToneMappingSupported {
-                    supportWideColor.append(format)
+                if #available(iOS 13.0, *) {
+                    if format.isGlobalToneMappingSupported {
+                        supportWideColor.append(format)
+                    }
+                } else {
+                    // Fallback on earlier versions
                 }
             }
         }
